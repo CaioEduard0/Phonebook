@@ -10,8 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.example.phonebook.dto.ContactDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table(name = "tb_contact")
+@Table(name = "tb_contacts")
 public class Contact implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -21,19 +24,10 @@ public class Contact implements Serializable {
 	private String name;
 	private String phone;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
-	public Contact() {
-	}
-
-	public Contact(Long id, String name, String phone, User user) {
-		this.id = id;
-		this.name = name;
-		this.phone = phone;
-		this.user = user;
-	}
 
 	public Long getId() {
 		return id;
@@ -61,6 +55,17 @@ public class Contact implements Serializable {
 	
 	public User getUser() {
 		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	public ContactDTO contactToDto(Contact contact) {
+		ContactDTO contactDto = new ContactDTO();
+		contactDto.setName(contact.getName());
+		contactDto.setPhone(contact.getPhone());
+		return contactDto;
 	}
 	
 	@Override

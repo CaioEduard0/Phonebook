@@ -2,7 +2,10 @@ package com.example.phonebook.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,9 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.example.phonebook.dto.UserDTO;
+
 @Entity
-@Table(name = "tb_user")
-public class User implements Serializable {
+@Table(name = "tb_users")
+public class User implements Serializable, UserDetails {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -21,20 +30,12 @@ public class User implements Serializable {
 	private Long id;
 	private String name;
 	private String email;
+	private String username;
 	private String password;
+	private String authorities;
 	
 	@OneToMany(mappedBy = "user")
 	private List<Contact> agenda = new ArrayList<>();
-	
-	public User() {
-	}
-	
-	public User(Long id, String name, String email, String password) {
-		this.id = id;
-		this.name = name;
-		this.email = email;
-		this.password = password;
-	}
 
 	public Long getId() {
 		return id;
@@ -71,6 +72,13 @@ public class User implements Serializable {
 	public List<Contact> getAgenda() {
 		return agenda;
 	}
+	
+	public UserDTO userToDto(User user) {
+		UserDTO userDto = new UserDTO();
+		userDto.setName(user.getName());
+		userDto.setEmail(user.getEmail());
+		return userDto;
+	}
 
 	@Override
 	public int hashCode() {
@@ -94,6 +102,44 @@ public class User implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		return true;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return Arrays.stream(authorities.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());		
+	}
+	
+	public void setAuthorities(String authorities) {
+		this.authorities = authorities;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
 		return true;
 	}
 }

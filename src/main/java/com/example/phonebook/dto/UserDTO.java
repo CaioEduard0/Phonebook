@@ -2,19 +2,22 @@ package com.example.phonebook.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import com.example.phonebook.entities.User;
+
 public class UserDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	@NotBlank(message = "{name.not.blank}")
+	@Size(min = 2, max = 50, message = "{name.size}")
 	private String name;
-	private String email;
 	
-	public UserDTO() {
-	}
-
-	public UserDTO(String name, String email) {
-		this.name = name;
-		this.email = email;
-	}
+	@Email(message = "{email.not.valid}")
+	@NotBlank(message = "{email.not.blank}")
+	private String email;
 
 	public String getName() {
 		return name;
@@ -30,5 +33,12 @@ public class UserDTO implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public User DtoToUser(UserDTO userDto) {
+		User user = new User();
+		user.setName(userDto.getName());
+		user.setEmail(userDto.getEmail());
+		return user;
 	}
 }
