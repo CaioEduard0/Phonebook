@@ -8,7 +8,5 @@ import com.example.phonebook.entities.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	public Optional<User> findByEmail(String email);
-	
-	public Optional<User> findByUsername(String username);
+	Optional<User> find(String email);
 }
