@@ -68,14 +68,4 @@ public class UserCreatorDTO implements Serializable {
 	public void setAuthorities(String authorities) {
 		this.authorities = authorities;
 	}
-	
-	public User DtoToUser(UserCreatorDTO userDto) {
-		User user = new User();
-		user.setName(userDto.getName());
-		user.setEmail(userDto.getEmail());
-		user.setPassword(userDto.getPassword());
-		user.setUsername(userDto.getUsername());
-		user.setAuthorities(userDto.getAuthorities());
-		return user;
-	}
 }
