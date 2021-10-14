@@ -14,7 +14,7 @@ import com.example.phonebook.services.UserService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	private final UserService userService;
+	private UserService userService;
 	
 	public SecurityConfig(UserService userService) {
 		this.userService = userService;

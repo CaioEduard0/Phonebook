@@ -33,35 +33,35 @@ public class UserController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<UserDTO> find(@PathVariable Long id) {
-		User user = userService.find(id);
+	public ResponseEntity<UserDTO> findUserById(@PathVariable Long id) {
+		User user = userService.findUserById(id);
 		return ResponseEntity.ok(user.userToDto(user));
 	}
 	
 	@GetMapping(value = "/find")
-	public ResponseEntity<UserDTO> find(@RequestParam String email) {
-		User user = userService.find(email);
+	public ResponseEntity<UserDTO> findUserByEmail(@RequestParam String email) {
+		User user = userService.findUserByEmail(email);
 		return ResponseEntity.ok(user.userToDto(user));
 	}
 	
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> create(@Valid @RequestBody UserCreatorDTO userDto) {
-		User user = userService.create(userDto.DtoToUser(userDto));
+	public ResponseEntity<Void> insertUser(@Valid @RequestBody UserCreatorDTO userDto) {
+		User user = userService.insertUser(userDto.DtoToUser(userDto));
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/"+user.getId()).build().toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody UserDTO userDto) {
-		userService.update(id, userDto.DtoToUser(userDto));
+	public ResponseEntity<Void> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDto) {
+		userService.updateUser(id, userDto.DtoToUser(userDto));
 		return ResponseEntity.ok().build();
 	}
 	
 	@DeleteMapping(value = "/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		userService.delete(id);
+	public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+		userService.deleteUser(id);
 		return ResponseEntity.noContent().build();
 	}
 }
