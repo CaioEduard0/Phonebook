@@ -1,4 +1,4 @@
-package com.example.phonebook.resources.exceptions;
+package com.example.phonebook.exceptions;
 
 import java.time.Instant;
 import java.util.Set;
