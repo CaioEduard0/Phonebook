@@ -1,4 +1,4 @@
-package com.example.phonebook.exceptions;
+package com.example.phonebook.resources.exceptions;
 
 public class ErrorsDTO {
 	

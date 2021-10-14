@@ -16,47 +16,49 @@ import com.example.phonebook.services.exceptions.RepeatedEmailException;
 import com.example.phonebook.services.exceptions.RepeatedUsernameException;
 import com.example.phonebook.services.exceptions.UserNotFoundException;
 import com.example.phonebook.services.exceptions.UserWithContactsException;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class UserService implements UserDetailsService {
 
-	private final UserRepository userRepository;
+	private UserRepository userRepository;
 	
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 	
-	public User find(Long id) {
+	public User findUserById(Long id) {
 		Optional<User> user = userRepository.findById(id);
 		return user.orElseThrow(() -> new UserNotFoundException(id));
 	}
 	
-	public User find(String email) {
-		Optional<User> user = userRepository.find(email);
+	public User findUserByEmail(String email) {
+		Optional<User> user = userRepository.findByEmail(email);
 		return user.orElseThrow(() -> new EmailNotFoundException(email));
 	}
 	
-	public User create(User user) {
-		Optional<User> email = userRepository.find(user.getEmail());
+	public User insertUser(User user) {
+		Optional<User> email = userRepository.findByEmail(user.getEmail());
+		Optional<User> username = userRepository.findByUsername(user.getUsername());
 		if (email.isPresent()) {
 			throw new RepeatedEmailException(user.getEmail());
-		}
+		}		
+		if (username.isPresent()) {
+			throw new RepeatedUsernameException(user.getUsername());
+		}		
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
-
-	public void update(Long id, User user) {
-		User updatedUser = find(id);
+	
+	public void updateUser(Long id, User user) {
+		User updatedUser = findUserById(id);
 		updatedUser.setName(user.getName());
 		updatedUser.setEmail(user.getEmail());
 		userRepository.save(updatedUser);
 	}
 	
-	public void delete(Long id) {
-		User user = find(id);
+	public void deleteUser(Long id) {
+		User user = findUserById(id);
 		if (user.getAgenda().isEmpty()) {
 			userRepository.deleteById(id);
 		} else {
@@ -65,8 +67,8 @@ public class UserService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String email) {
-		Optional<User> user = userRepository.find(email);
-		return user.orElseThrow(() -> new UsernameNotFoundException("User with " + email + " not found!"));
+	public UserDetails loadUserByUsername(String username) {
+		Optional<User> user = userRepository.findByUsername(username);
+		return user.orElseThrow(() -> new UsernameNotFoundException("User with " + username + " not found!"));
 	}
 }
