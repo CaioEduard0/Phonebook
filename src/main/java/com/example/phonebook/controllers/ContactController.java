@@ -29,25 +29,25 @@ import com.example.phonebook.services.ContactService;
 @RequestMapping(value = "/users")
 public class ContactController {
 	
-	private ContactService contactService;
+	private final ContactService contactService;
 	
 	public ContactController(ContactService contactService) {
 		this.contactService = contactService;
 	}
 	
-	@GetMapping(value = "/{id}/contacts")
-	public ResponseEntity<Page<ContactDTO>> findAllUserContacts(@PathVariable Long id) {
-		List<Contact> contacts = contactService.findAllContacts(id);
-		List<ContactDTO> contactsDto = contacts.stream().map(con -> con.contactToDto(con)).collect(Collectors.toList());		
-		return ResponseEntity.ok(new PageImpl<>(contactsDto, PageRequest.of(1, 5), contactsDto.size()));
-	}
+//	@GetMapping(value = "/{id}/contacts")
+//	public ResponseEntity<Page<ContactDTO>> findAllUserContacts(@PathVariable Long id) {
+//		List<Contact> contacts = contactService.findAllContacts(id);
+//		List<ContactDTO> contactsDto = contacts.stream().map(con -> con.contactToDto(con)).collect(Collectors.toList());
+//		return ResponseEntity.ok(new PageImpl<>(contactsDto, PageRequest.of(1, 5), contactsDto.size()));
+//	}
 	
-	@GetMapping(value = "/{id}/contacts/find")
-	public ResponseEntity<Page<ContactDTO>> findContactsByName(@PathVariable Long id, @RequestParam String name) {
-		List<Contact> contacts = contactService.findContactsByName(id, name);
-		List<ContactDTO> contactsDto = contacts.stream().map(con -> con.contactToDto(con)).collect(Collectors.toList());
-		return ResponseEntity.ok(new PageImpl<>(contactsDto, PageRequest.of(1, 5), contactsDto.size()));
-	}
+//	@GetMapping(value = "/{id}/contacts/find")
+//	public ResponseEntity<Page<ContactDTO>> findContactsByName(@PathVariable Long id, @RequestParam String name) {
+//		List<Contact> contacts = contactService.findContactsByName(id, name);
+//		List<ContactDTO> contactsDto = contacts.stream().map(con -> con.contactToDto(con)).collect(Collectors.toList());
+//		return ResponseEntity.ok(new PageImpl<>(contactsDto, PageRequest.of(1, 5), contactsDto.size()));
+//	}
 	
 	@PostMapping(value = "/{id}/contacts")
 	public ResponseEntity<Void> insertContact(@PathVariable Long id, @Valid @RequestBody ContactDTO contactDto) {

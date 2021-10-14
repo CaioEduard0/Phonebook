@@ -1,11 +1,11 @@
 package com.example.phonebook.controllers;
 
-import java.net.URI;
-
-import javax.validation.Valid;
-
+import com.example.phonebook.dto.UserDTO;
+import com.example.phonebook.dto.UserResponseDTO;
+import com.example.phonebook.dto.UserUpdateDTO;
+import com.example.phonebook.services.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,51 +17,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.phonebook.dto.UserCreatorDTO;
-import com.example.phonebook.dto.UserDTO;
-import com.example.phonebook.entities.User;
-import com.example.phonebook.services.UserService;
+import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/users")
+@AllArgsConstructor
 public class UserController {
 	
 	private UserService userService;
-	
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
-	
+
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<UserDTO> findUserById(@PathVariable Long id) {
-		User user = userService.findUserById(id);
-		return ResponseEntity.ok(user.userToDto(user));
+	public ResponseEntity<UserResponseDTO> find(@PathVariable Long id) {
+		return ResponseEntity.ok(userService.find(id));
 	}
 	
-	@GetMapping(value = "/find")
-	public ResponseEntity<UserDTO> findUserByEmail(@RequestParam String email) {
-		User user = userService.findUserByEmail(email);
-		return ResponseEntity.ok(user.userToDto(user));
+	@GetMapping
+	public ResponseEntity<UserResponseDTO> find(@RequestParam String email) {
+		return ResponseEntity.ok(userService.find(email));
 	}
 	
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> insertUser(@Valid @RequestBody UserCreatorDTO userDto) {
-		User user = userService.insertUser(userDto.DtoToUser(userDto));
+	public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserDTO userDto) {
+		UserResponseDTO user = userService.create(userDto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/"+user.getId()).build().toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDto) {
-		userService.updateUser(id, userDto.DtoToUser(userDto));
-		return ResponseEntity.ok().build();
+	@PutMapping
+	public ResponseEntity<UserResponseDTO> update(@RequestBody @Valid UserUpdateDTO userDto) {
+		return ResponseEntity.ok(userService.update(userDto));
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-		userService.deleteUser(id);
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		userService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 }
