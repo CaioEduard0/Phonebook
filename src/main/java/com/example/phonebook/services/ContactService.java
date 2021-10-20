@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.phonebook.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.phonebook.dto.ContactDTO;
@@ -12,8 +13,6 @@ import com.example.phonebook.entities.Contact;
 import com.example.phonebook.entities.User;
 import com.example.phonebook.repositories.ContactRepository;
 import com.example.phonebook.repositories.UserRepository;
-import com.example.phonebook.services.exceptions.ContactNotFoundException;
-import com.example.phonebook.services.exceptions.UserNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -62,7 +61,7 @@ public class ContactService {
 	
 	private User findUser(Long id) {
 		Optional<User> user = userRepository.findById(id);
-		return user.orElseThrow(() -> new UserNotFoundException(id));
+		return user.orElseThrow(NotFoundException::new);
 	}
 		
 	private Contact findContact(Long userId, Long contactId) {
@@ -75,7 +74,7 @@ public class ContactService {
 			}
 		}
 		if (contact == null) {
-			throw new ContactNotFoundException(contactId);
+			throw new NotFoundException();
 		}
 		return contact;	
 	}

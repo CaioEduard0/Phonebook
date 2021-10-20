@@ -4,16 +4,13 @@ import com.example.phonebook.dto.UserDTO;
 import com.example.phonebook.dto.UserResponseDTO;
 import com.example.phonebook.dto.UserUpdateDTO;
 import com.example.phonebook.entities.User;
+import com.example.phonebook.exceptions.BadRequestException;
+import com.example.phonebook.exceptions.NotFoundException;
 import com.example.phonebook.mappers.UserMapper;
 import com.example.phonebook.repositories.UserRepository;
-import com.example.phonebook.services.exceptions.EmailNotFoundException;
-import com.example.phonebook.services.exceptions.RepeatedEmailException;
-import com.example.phonebook.services.exceptions.UserNotFoundException;
-import com.example.phonebook.services.exceptions.UserWithContactsException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,19 +28,19 @@ public class UserService implements UserDetailsService {
 
 	public UserResponseDTO find(Long id) {
 		Optional<User> user = userRepository.findById(id);
-		return userMapper.toDTO(user. orElseThrow(() -> new UserNotFoundException(id)));
+		return userMapper.toDTO(user. orElseThrow(NotFoundException::new));
 	}
 	
 	public UserResponseDTO find(String email) {
 		Optional<User> user = userRepository.findByEmail(email);
-		return userMapper.toDTO(user. orElseThrow(() -> new EmailNotFoundException(email)));
+		return userMapper.toDTO(user. orElseThrow(NotFoundException::new));
 	}
 	
 	public UserResponseDTO create(UserDTO userDTO) {
 		User user = userMapper.toEntity(userDTO);
 		Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
 		if (userOptional.isPresent()) {
-			throw new RepeatedEmailException(user.getEmail());
+			throw new BadRequestException("The e-mail " + user.getEmail() + " is already registered.");
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userMapper.toDTO(userRepository.save(user));
@@ -60,13 +57,13 @@ public class UserService implements UserDetailsService {
 		if (userRepository.findById(id).get().getAgenda().isEmpty()) {
 			userRepository.deleteById(id);
 		} else {
-			throw new UserWithContactsException();
+			throw new BadRequestException("The user has contacts and cannot be deleted.");
 		}
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) {
 		Optional<User> user = userRepository.findByEmail(email);
-		return user.orElseThrow(() -> new UsernameNotFoundException("User with " + email + " not found."));
+		return user.orElseThrow(NotFoundException::new);
 	}
 }
