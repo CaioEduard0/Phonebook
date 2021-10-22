@@ -1,70 +1,74 @@
-package com.example.phonebook.test.utils;
-
-import com.example.phonebook.dto.UserCreatorDTO;
-import com.example.phonebook.dto.UserDTO;
-import com.example.phonebook.entities.User;
-
-public class UserCreator {
-	
-	public static User createUser() {
-		User user = new User();
-		user.setName("José");
-		user.setEmail("jose@gmail.com");
-		user.setPassword("{bcrypt}$2a$10$h1UiVi/kvWUAr5E5MyVOqO4gljJ7f9./pkpPHEIvCkSnh6cyENvYK");
-		user.setUsername("jose");
-		user.setAuthorities("ROLE_USER,ROLE_ADMIN");
-		return user;
-	}
-	
-	public static User createValidUser() {
-		User user = createUser();
-		user.setId(1L);
-		user.getAgenda().add(ContactCreator.createValidContact());
-		return user;
-	}
-	
-//	public static User createValidUserr() {
+//package com.example.phonebook.test.utils;
+//
+//import com.example.phonebook.dto.UserDTO;
+//import com.example.phonebook.dto.UserResponseDTO;
+//import com.example.phonebook.dto.UserUpdateDTO;
+//import com.example.phonebook.entities.User;
+//import org.springframework.security.core.authority.SimpleGrantedAuthority;
+//
+//import java.util.Set;
+//
+//public class UserCreator {
+//
+//	public static User createUser() {
+//		return User.builder()
+//				.name("José")
+//				.email("jose@gmail.com")
+//				.password("{bcrypt}$2a$10$h1UiVi/kvWUAr5E5MyVOqO4gljJ7f9./pkpPHEIvCkSnh6cyENvYK")
+//				.authorities(Set.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("ADMIN")))
+//				.build();
+//
+//	}
+//
+//	public static User createValidUser() {
 //		User user = createUser();
 //		user.setId(1L);
-//		user.getAgenda().add(ContactCreator.createContact());
+//		user.getAgenda().add(ContactCreator.createValidContact());
 //		return user;
 //	}
-	
-	public static UserCreatorDTO createUserToBeSaved() {
-		UserCreatorDTO user = new UserCreatorDTO();
-		user.setName("Pedro");
-		user.setEmail("pedro@gmail.com");
-		user.setPassword("123456");
-		user.setUsername("pedro");
-		user.setAuthorities("ROLE_USER,ROLE_ADMIN");
-		return user;
-	}
-	
-	public static UserDTO createUserToUpdate() {
-		UserDTO userDto = new UserDTO();
-		userDto.setName("Marcos");
-		userDto.setEmail("marcos@gmail.com");
-		return userDto;
-	}
-	
-	public static User createUserToBeDeleted() {
-		User user = new User();
-		user.setId(1L);
-		user.setName("Pedro");
-		user.setEmail("pedro@gmail.com");
-		user.setPassword("{bcrypt}$2a$10$h1UiVi/kvWUAr5E5MyVOqO4gljJ7f9./pkpPHEIvCkSnh6cyENvYK");
-		user.setUsername("pedro");
-		user.setAuthorities("ROLE_USER");
-		return user;
-	}
-	
-	public static UserCreatorDTO createUserToError() {
-		UserCreatorDTO user = new UserCreatorDTO();
-		user.setName("J");
-		user.setEmail("gmail.com");
-		user.setPassword("12345");
-		user.setUsername("J");
-		user.setAuthorities("ROLE_USER,ROLE_ADMIN");
-		return user;
-	}
-}
+//
+//	public static UserDTO createUserToBeSaved() {
+//		return UserDTO.builder()
+//				.name("Pedro")
+//				.email("pedro@gmail.com")
+//				.password("123456")
+//				.authorities(Set.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("ADMIN")))
+//				.build();
+//	}
+//
+//	public static UserUpdateDTO createUserToUpdate() {
+//		return UserUpdateDTO.builder()
+//				.id(1L)
+//				.name("Marcos")
+//				.email("marcos@gmail.com")
+//				.build();
+//	}
+//
+//	public static User createUserToBeDeleted() {
+//		return User.builder()
+//				.id(1L)
+//				.name("Pedro")
+//				.email("pedro@gmail.com")
+//				.password("{bcrypt}$2a$10$h1UiVi/kvWUAr5E5MyVOqO4gljJ7f9./pkpPHEIvCkSnh6cyENvYK")
+//				.authorities(Set.of(new SimpleGrantedAuthority("USER")))
+//				.build();
+//	}
+//
+//	public static UserDTO createUserToError() {
+//		return UserDTO.builder()
+//				.name("J")
+//				.email("gmail.com")
+//				.password("12345")
+//				.authorities(Set.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("ADMIN")))
+//				.build();
+//	}
+//
+//	public static UserResponseDTO createUserResponse() {
+//		return UserResponseDTO.builder()
+//				.id(1L)
+//				.name("José")
+//				.email("jose@gmail.com")
+//				.authorities(Set.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("ADMIN")))
+//				.build();
+//	}
+//}

@@ -1,9 +1,11 @@
 package com.example.phonebook.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.phonebook.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.phonebook.dto.ContactDTO;
@@ -11,14 +13,14 @@ import com.example.phonebook.entities.Contact;
 import com.example.phonebook.entities.User;
 import com.example.phonebook.repositories.ContactRepository;
 import com.example.phonebook.repositories.UserRepository;
-import com.example.phonebook.services.exceptions.ContactNotFoundException;
-import com.example.phonebook.services.exceptions.UserNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ContactService {
 
-	private UserRepository userRepository;
-	private ContactRepository contactRepository;
+	private final UserRepository userRepository;
+	private final ContactRepository contactRepository;
 	
 	public ContactService(UserRepository userRepository, ContactRepository contactRepository) {
 		this.userRepository = userRepository;
@@ -59,7 +61,7 @@ public class ContactService {
 	
 	private User findUser(Long id) {
 		Optional<User> user = userRepository.findById(id);
-		return user.orElseThrow(() -> new UserNotFoundException(id));
+		return user.orElseThrow(NotFoundException::new);
 	}
 		
 	private Contact findContact(Long userId, Long contactId) {
@@ -67,12 +69,12 @@ public class ContactService {
 		List<Contact> contacts = user.getAgenda();
 		Contact contact = null;
 		for (Contact con : contacts) {
-			if (con.getId() == contactId) {
+			if (Objects.equals(con.getId(), contactId)) {
 				contact = con;
 			}
 		}
 		if (contact == null) {
-			throw new ContactNotFoundException(contactId);
+			throw new NotFoundException();
 		}
 		return contact;	
 	}
