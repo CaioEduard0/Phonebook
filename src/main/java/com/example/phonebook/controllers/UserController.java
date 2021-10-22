@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/users", consumes = "application/json", produces = "application/json")
 @AllArgsConstructor
 public class UserController {
 	

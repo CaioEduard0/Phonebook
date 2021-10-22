@@ -36,7 +36,7 @@ public class ExceptionHandlerAdvice {
 	}
 	
 	@ExceptionHandler(ConflictException.class)
-	public ResponseEntity<ApiErrorDTO> repeatedEmail(ConflictException exception) {
+	public ResponseEntity<ApiErrorDTO> conflict(ConflictException exception) {
 		Set<ErrorsDTO> errors = Set.of(new ErrorsDTO("Conflict", exception.getMessage()));
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(baseErrorBuilder(HttpStatus.CONFLICT, errors));
 	}

@@ -1,11 +1,9 @@
 package com.example.phonebook.controllers;
 
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
+import com.example.phonebook.dto.ContactDTO;
+import com.example.phonebook.dto.ContactResponseDTO;
+import com.example.phonebook.services.ContactService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,50 +19,44 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.phonebook.dto.ContactDTO;
-import com.example.phonebook.entities.Contact;
-import com.example.phonebook.services.ContactService;
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/users", consumes = "application/json", produces = "application/json")
+@AllArgsConstructor
 public class ContactController {
 	
 	private final ContactService contactService;
 	
-	public ContactController(ContactService contactService) {
-		this.contactService = contactService;
+	@GetMapping(value = "/{userId}/contacts")
+	public ResponseEntity<Page<ContactResponseDTO>> findAll(@PathVariable Long userId, @RequestParam Integer page, @RequestParam Integer size) {
+		List<ContactResponseDTO> contacts = contactService.findAll(userId);
+		return ResponseEntity.ok(new PageImpl<>(contacts, PageRequest.of(page, size), contacts.size()));
 	}
 	
-//	@GetMapping(value = "/{id}/contacts")
-//	public ResponseEntity<Page<ContactDTO>> findAllUserContacts(@PathVariable Long id) {
-//		List<Contact> contacts = contactService.findAllContacts(id);
-//		List<ContactDTO> contactsDto = contacts.stream().map(con -> con.contactToDto(con)).collect(Collectors.toList());
-//		return ResponseEntity.ok(new PageImpl<>(contactsDto, PageRequest.of(1, 5), contactsDto.size()));
-//	}
+	@GetMapping(value = "/{userId}/contacts")
+	public ResponseEntity<Page<ContactResponseDTO>> find(@PathVariable Long userId, @RequestParam String name, @RequestParam Integer page, @RequestParam Integer size) {
+		List<ContactResponseDTO> contacts = contactService.find(userId, name);
+		return ResponseEntity.ok(new PageImpl<>(contacts, PageRequest.of(page, size), contacts.size()));
+	}
 	
-//	@GetMapping(value = "/{id}/contacts/find")
-//	public ResponseEntity<Page<ContactDTO>> findContactsByName(@PathVariable Long id, @RequestParam String name) {
-//		List<Contact> contacts = contactService.findContactsByName(id, name);
-//		List<ContactDTO> contactsDto = contacts.stream().map(con -> con.contactToDto(con)).collect(Collectors.toList());
-//		return ResponseEntity.ok(new PageImpl<>(contactsDto, PageRequest.of(1, 5), contactsDto.size()));
-//	}
-	
-	@PostMapping(value = "/{id}/contacts")
-	public ResponseEntity<Void> insertContact(@PathVariable Long id, @Valid @RequestBody ContactDTO contactDto) {
-		Contact contact = contactService.insertContact(id, contactDto); 
+	@PostMapping(value = "/contacts")
+	public ResponseEntity<ContactResponseDTO> create(@Valid @RequestBody ContactDTO contactDto) {
+		ContactResponseDTO contact = contactService.create(contactDto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/"+contact.getId()).build().toUri();
-		return ResponseEntity.created(uri).build();
+		return ResponseEntity.created(uri).body(contact);
 	}
 	
 	@PutMapping(value = "/{userId}/contacts/{contactId}")
-	public ResponseEntity<Void> updateContact(@PathVariable Long userId, @PathVariable Long contactId, @Valid @RequestBody ContactDTO contactDto) {
-		contactService.updateContact(userId, contactId, contactDto);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<ContactResponseDTO> update(@PathVariable Long userId, @PathVariable Long contactId, @Valid @RequestBody ContactDTO contactDto) {
+		return ResponseEntity.ok(contactService.update(userId, contactId, contactDto));
 	}
 	
 	@DeleteMapping(value = "/{userId}/contacts/{contactId}")
-	public ResponseEntity<Void> deleteContact(@PathVariable Long userId, @PathVariable Long contactId) {
-		contactService.deleteContact(userId, contactId);
+	public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long contactId) {
+		contactService.delete(userId, contactId);
 		return ResponseEntity.noContent().build();
 	}
 }
